@@ -1,0 +1,175 @@
+﻿@model MSGM.Web.ViewModels.vmManageUser
+@{
+    ViewData["Title"] = "EditCategory";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="content-header row">
+    <div class="content-header-left col-md-9 col-12 mb-2">
+        <div class="row breadcrumbs-top">
+            <div class="col-12">
+                <h2 class="content-header-title float-start mb-0">Category Management</h2>
+                <div class="breadcrumb-wrapper">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="~/Account/Dashboard">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item active">
+                            Edit Category
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="content-body">
+    <section id="basic-input">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Edit Category</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <form asp-action="AddUser" method="post">
+                                <div class="row">
+                                    <div class="col-xl-6 col-md-6 col-12">
+                                        <div class="mb-1">
+                                            <label class="form-label" asp-for="UserName">Name:</label>
+                                            <input type="text" class="form-control" asp-for="UserName" placeholder="Enter Name..." required />
+                                            <span asp-validation-for="UserName" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xl-6 col-md-6 col-12">
+                                        <div class="mb-1">
+                                            <label class="form-label" asp-for="Email">Email:</label>
+                                            <input type="email" asp-for="Email" class="form-control" required />
+                                            <span asp-validation-for="Email" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-1" style="align-content:end">
+                                    <div class="col-9">
+                                    </div>
+                                    <div class="col-3">
+                                        <button type="button" id="btnUpdate" class="btn btn-sm-block btn-primary">Update</button>
+                                        <button type="button" id="btnDelete" class="btn btn-sm-block btn-danger">Delete</button>
+                                        <button type="button" id="btnClose" class="btn btn-sm btn-secondary">Close</button>
+                                    </div>
+                                </div>
+
+                                <input type="hidden" id="UserId" value="@Model.UserId" />
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Basic Inputs end -->
+</div>
+
+<script>
+    $(document).ready(function () {
+        var successMessage = '@TempData["SuccessMessage"]';
+        var errorMessage = '@TempData["ErrorMessage"]';
+        if (successMessage) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: successMessage
+            }).then((result) => {
+                if (result.isConfirmed)
+                {
+                    window.location.href = '/Account/NewUser';
+                }
+            });
+        }
+        else if (errorMessage) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: errorMessage
+            });
+        }        
+
+        $("#btnUpdate").click(function () {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Do you want to update the User?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, update it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var userId = $("#UserId").val();
+                    var data = {
+                        UserId: userId,
+                        UserName: $('#UserName').val(),
+                        Email: $('#Email').val()
+                    };
+                    $.ajax({
+                        type: 'POST',
+                        url: '/Account/UpdateUser',
+                        data: data,
+                        success: function (response) {
+                            Swal.fire({
+                                icon: response.success ? 'success' : 'error',
+                                title: response.success ? 'Success' : 'Error',
+                                text: response.message
+                            }).then(() => {
+                                if (response.success) {
+                                    window.location.href = '/Account/ManageUser';
+                                }
+                            });
+                        },
+                        error: function () {
+                            Swal.fire('Error', 'An error occurred while updating the user.', 'error');
+                        }
+                    });
+                }
+            });
+        });
+
+        $("#btnDelete").click(function () {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "This action cannot be undone.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var userId = $("#UserId").val();
+                    $.ajax({
+                        type: 'POST',
+                        url: '/Account/DeleteUser',
+                        data: { id: userId },
+                        success: function (response) {
+                            Swal.fire({
+                                icon: response.success ? 'success' : 'error',
+                                title: response.success ? 'Deleted!' : 'Error',
+                                text: response.message
+                            }).then(() => {
+                                if (response.success) {
+                                    window.location.href = '/Account/ManageUser';
+                                }
+                            });
+                        },
+                        error: function () {
+                            Swal.fire('Error', 'An error occurred while deleting the user.', 'error');
+                        }
+                    });
+                }
+            });
+        });
+
+        $("#btnClose").click(function () {
+            window.location.href = "/Account/ManageUser";
+        });
+    });
+</script>

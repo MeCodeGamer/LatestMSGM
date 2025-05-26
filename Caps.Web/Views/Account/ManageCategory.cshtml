@@ -1,0 +1,117 @@
+﻿@model MSGM.Web.ViewModels.vmCategory
+@{
+    ViewData["Title"] = "ManageCategory";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="content-header row">
+    <div class="content-header-left col-md-9 col-12 mb-2">
+        <div class="row breadcrumbs-top">
+            <div class="col-12">
+                <h2 class="content-header-title float-start mb-0">Category Management</h2>
+                <div class="breadcrumb-wrapper">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="~/Account/Dashboard">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item active">
+                            Manage Category
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="content-body">
+    @* User List *@
+    <section id="basic-input">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title"> Category List</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="card shadow-none bg-transparent border-primary">
+                                <div class="container-fluid">
+                                    <div class="block-content block-content-full">
+                                        <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper dt-bootstrap5 no-footer">
+                                            <table class="table table-bordered table-hover-animation table-sm" id="myTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Id</th>
+                                                        <th>Title</th>
+                                                        <th>Description</th>
+                                                        <th>Status</th>
+                                                        <th>Action</th>                            
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if (Model.categoryList != null)
+                                                    {
+                                                        for (int i = 0; i < Model.categoryList.Count; i++)
+                                                        {
+                                                            <tr>
+                                                                <td>@Model.categoryList[i].Id</td>
+                                                                <td>@Model.categoryList[i].Title</td>
+                                                                <td>@Model.categoryList[i].Description</td>
+                                                                <td>@(Model.categoryList[i].Status ? "Active" : "Disable")</td>
+                                                                <td>
+                                                                    @{
+                                                                        var encodedId = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(
+                                                                        Model.categoryList[i].Id.ToString()));
+                                                                    }
+                                                                    <a href="@Url.Action("EditCategory", "Account", new { id = encodedId })"
+                                                                       class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="Edit Category">
+                                                                        <i class="fas fa-arrow-circle-right"></i> Edit
+                                                                    </a>
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+    $(document).ready(function () {
+        var successMessage = '@TempData["SuccessMessage"]';
+        var errorMessage = '@TempData["ErrorMessage"]';
+        if (successMessage) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: successMessage
+            });
+        }
+        else if (errorMessage) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: errorMessage
+            });
+        }
+
+        $('#myTable').DataTable({
+            order: [[0, 'desc']],
+            dom: '<"card-header border-bottom p-1"<"head-label"><"dt-action-buttons text-end"B>><"d-flex justify-content-between align-items-center mx-0 row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>t<"d-flex justify-content-between mx-0 row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
+            displayLength: 25,
+            lengthMenu: [25, 50, 75, 100]
+        });
+
+        $("#btnClose").click(function () {
+            window.location.href = "/Account/Dashboard";
+        });
+    });
+</script>

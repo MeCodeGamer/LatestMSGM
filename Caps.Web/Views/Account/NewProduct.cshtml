@@ -1,0 +1,151 @@
+﻿@model MSGM.Web.ViewModels.vmProduct
+@{
+    ViewData["Title"] = "NewProduct";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="content-header row">
+    <div class="content-header-left col-md-9 col-12 mb-2">
+        <div class="row breadcrumbs-top">
+            <div class="col-12">
+                <h2 class="content-header-title float-start mb-0">Product Management</h2>
+                <div class="breadcrumb-wrapper">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="~/Account/Dashboard">Dashboard</a>
+                        </li>
+                        @* <li class="breadcrumb-item">
+                            <a href="~/Account/NewUser">User Management</a>
+                        </li> *@
+                        <li class="breadcrumb-item active">
+                            New Product
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="content-body">
+    <section id="basic-input">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">New Product</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <form asp-action="AddProduct" method="post">
+                                <div class="row">
+                                    <div class="col-xl-6 col-md-6 col-12">
+                                        <div class="mb-1">
+                                            <label class="form-label" asp-for="CatId">Category:</label>
+                                            <select asp-for="CatId" class="select2 form-select" data-live-search="1" required>
+                                                @if (ViewBag.Categories != null)
+                                                {
+                                                    foreach (var role in ViewBag.Categories)
+                                                    {
+                                                        <option value="@role.Value">@role.Text</option>
+                                                    }
+                                                }
+                                            </select>
+                                            <div class="position-relative">
+                                                <span asp-validation-for="CatId" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xl-6 col-md-6 col-12">
+                                        <div class="mb-1">
+                                            <label class="form-label" asp-for="Title">Title:</label>
+                                            <input type="text" asp-for="Title" class="form-control" required/>
+                                            <span asp-validation-for="Title" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-xl-6 col-md-6 col-12">
+                                        <div class="mb-1">
+                                            <label class="form-label" asp-for="Description">Description:</label>
+                                            <textarea class="form-control" rows="2" asp-for="Description"></textarea>
+                                            <div class="position-relative">
+                                                <span asp-validation-for="Description" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xl-6 col-md-6 col-12">
+                                        <div class="mb-1">
+                                            <label class="form-label" asp-for="Price">Price:</label>
+                                            <input type="number" asp-for="Price" class="form-control" required />
+                                            <span asp-validation-for="Price" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-xl-6 col-md-6 col-12">
+                                        <div class="mb-1">
+                                            <label class="form-label" asp-for="Status">Status:</label>
+                                            <select asp-for="Status" class="select2 form-select" data-live-search="1" required>
+                                                <option value="">-- Select Status --</option>
+                                                <option value="true">Available</option>
+                                                <option value="false">Sold Out/ Coming Soon</option>
+                                            </select>
+                                            <div class="position-relative">
+                                                <span asp-validation-for="Status" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xl-6 col-md-6 col-12">
+                                        <div class="mb-1">
+                                            <label class="form-label" asp-for="Image">Image:</label>
+                                            <input type="image" asp-for="Image" class="form-control" required />
+                                            <span asp-validation-for="Image" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-9">
+                                    </div>
+                                    <div class="col-3">
+                                        <button type="submit" class="btn btn-sm btn-primary">Add Product</button>
+                                        <button type="button" id="btnClose" class="btn btn-sm btn-secondary">Close</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+    $(document).ready(function () {
+        var successMessage = '@TempData["SuccessMessage"]';
+        var errorMessage = '@TempData["ErrorMessage"]';
+        if (successMessage) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: successMessage
+            });
+        }
+        else if (errorMessage) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: errorMessage
+            });
+        }
+        $("#btnClose").click(function () {
+            window.location.href = "/Account/Dashboard";
+        });
+    });
+</script>

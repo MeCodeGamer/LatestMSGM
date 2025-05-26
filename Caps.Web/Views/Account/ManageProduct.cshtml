@@ -1,0 +1,136 @@
+﻿@* @model MSGM.Web.ViewModels.vmUsers *@
+@{
+    ViewData["Title"] = "ManageProduct";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="content-header row">
+    <div class="content-header-left col-md-9 col-12 mb-2">
+        <div class="row breadcrumbs-top">
+            <div class="col-12">
+                <h2 class="content-header-title float-start mb-0">Product Management</h2>
+                <div class="breadcrumb-wrapper">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="~/Account/Dashboard">Dashboard</a>
+                        </li>
+                        @* <li class="breadcrumb-item">
+                            <a href="~/Account/NewUser">User Management</a>
+                        </li> *@
+                        <li class="breadcrumb-item active">
+                            Manage Product
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="content-body">
+
+    @* User List *@
+    <section id="basic-input">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title"> Product List</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    @* ManageUser Card *@
+    <section id="basic-input">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Manage Product</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+
+                            @* <form asp-action="AddUser" method="post">
+                                <div class="row">
+                                    <div class="col-xl-6 col-md-6 col-12">
+                                        <div class="mb-1">
+                                            <label class="form-label" asp-for="UserName">Name:</label>
+                                            <input type="text" class="form-control" asp-for="UserName" placeholder="Enter Name..." required />
+                                            <span asp-validation-for="UserName" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xl-6 col-md-6 col-12">
+                                        <div class="mb-1">
+                                            <label class="form-label" asp-for="Email">Email:</label>
+                                            <input type="email" asp-for="Email" class="form-control" required />
+                                            <span asp-validation-for="Email" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-xl-6 col-md-6 col-12">
+                                        <div class="mb-1">
+                                            <label class="form-label" asp-for="Password">Password:</label>
+                                            <input type="password" asp-for="Password" class="form-control" required />
+                                            <span asp-validation-for="Password" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xl-6 col-md-6 col-12">
+                                        <div class="mb-1">
+                                            <label class="form-label" asp-for="ConfirmPassword">Confirm Password:</label>
+                                            <input type="password" asp-for="ConfirmPassword" class="form-control" required />
+                                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-9">
+                                    </div>
+                                    <div class="col-3">
+                                        <button type="submit" class="btn btn-sm btn-primary">Create User</button>
+                                        <button type="button" id="btnClose" class="btn btn-sm btn-secondary">Close</button>
+                                    </div>
+                                </div>
+                            </form> *@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<script>
+    $(document).ready(function () {
+        var successMessage = '@TempData["SuccessMessage"]';
+        var errorMessage = '@TempData["ErrorMessage"]';
+        if (successMessage) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: successMessage
+            });
+        }
+        else if (errorMessage) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: errorMessage
+            });
+        }
+        $("#btnClose").click(function () {
+            window.location.href = "/Account/Dashboard";
+        });
+    });
+</script>

@@ -1,0 +1,106 @@
+﻿@model MSGM.Web.ViewModels.vmCategory
+@{
+    ViewData["Title"] = "NewCategory";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="content-header row">
+    <div class="content-header-left col-md-9 col-12 mb-2">
+        <div class="row breadcrumbs-top">
+            <div class="col-12">
+                <h2 class="content-header-title float-start mb-0">Category Management</h2>
+                <div class="breadcrumb-wrapper">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="~/Account/Dashboard">Dashboard</a>
+                        </li>
+                        @* <li class="breadcrumb-item">
+                            <a href="~/Account/NewUser">User Management</a>
+                        </li> *@
+                        <li class="breadcrumb-item active">
+                            New Category
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="content-body">
+    <section id="basic-input">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">New Category</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <form asp-action="AddCategory" asp-controller="Account" method="post">
+                                <div class="row">
+                                    <div class="col-xl-6 col-md-6 col-12">
+                                        <div class="mb-1">
+                                            <label class="form-label" asp-for="Title">Title:</label>
+                                            <input type="text" class="form-control" autofocus="true" asp-for="Title" />
+                                            <div class="position-relative">
+                                                <span asp-validation-for="Title" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xl-6 col-md-6 col-12">
+                                        <div class="mb-1">
+                                            <label class="form-label" asp-for="Description">Description:</label>
+                                            <textarea class="form-control" rows="2" asp-for="Description"></textarea>
+                                            <div class="position-relative">
+                                                <span asp-validation-for="Description" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-1">
+                                    <div class="col-10">
+                                    </div>
+                                    <div class="col-2">
+                                        <button type="submit" class="btn btn-sm btn-primary">Save</button>
+                                        <button type="button" id="btnClose" class="btn btn-sm btn-secondary">Close</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Basic Inputs end -->
+</div>
+
+<script>
+    $(document).ready(function () {
+        var successMessage = '@TempData["SuccessMessage"]';
+        var errorMessage = '@TempData["ErrorMessage"]';
+        if (successMessage) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: successMessage
+            }).then((result) => {
+                if (result.isConfirmed) 
+                {
+                    window.location.href = '/Account/NewCategory';
+                }
+            });
+        }
+        else if (errorMessage) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: errorMessage
+            });
+        }
+        $("#btnClose").click(function () {
+            window.location.href = "/Account/Dashboard";
+        });
+    });
+</script>
