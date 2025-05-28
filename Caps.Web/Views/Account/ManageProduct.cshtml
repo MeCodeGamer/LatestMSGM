@@ -1,4 +1,4 @@
-﻿@* @model MSGM.Web.ViewModels.vmUsers *@
+﻿@model MSGM.Web.ViewModels.vmProduct
 @{
     ViewData["Title"] = "ManageProduct";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -14,9 +14,6 @@
                         <li class="breadcrumb-item">
                             <a href="~/Account/Dashboard">Dashboard</a>
                         </li>
-                        @* <li class="breadcrumb-item">
-                            <a href="~/Account/NewUser">User Management</a>
-                        </li> *@
                         <li class="breadcrumb-item active">
                             Manage Product
                         </li>
@@ -27,8 +24,6 @@
     </div>
 </div>
 <div class="content-body">
-
-    @* User List *@
     <section id="basic-input">
         <div class="row">
             <div class="col-md-12">
@@ -38,77 +33,63 @@
                     </div>
                     <div class="card-body">
                         <div class="row">
+                            <div class="card shadow-none bg-transparent border-primary">
+                                <div class="container-fluid">
+                                    <div class="block-content block-content-full">
+                                        <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper dt-bootstrap5 no-footer">
+                                            <table class="table table-bordered table-hover-animation table-sm" id="myTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Id</th>
+                                                        <th>Image</th>
+                                                        <th>Title</th>
+                                                        <th>Description</th>
+                                                        <th>Category</th>
+                                                        <th>Status</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if (Model.productlist != null)
+                                                    {
+                                                        for (int i = 0; i < Model.productlist.Count; i++)
+                                                        {
+                                                            <tr>
+                                                                <td>@Model.productlist[i].Id</td>
+                                                                <td>
+                                                                    <div class="border-primary">
+                                                                        <img src="~/DataFiles/@Model.productlist[i].Image" style="width:90px" />
+                                                                    </div>                                                                    
+                                                                </td>
+                                                                <td>@Model.productlist[i].Title</td>
+                                                                <td>@Model.productlist[i].Description</td>
+                                                                <td>@Model.productlist[i].Category?.Title</td>
+                                                                <td>@(Model.productlist[i].Status ? "Active" : "Disable")</td>
+                                                                <td>
+                                                                    @{
+                                                                        var encodedId = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(
+                                                                        Model.productlist[i].Id.ToString()));
+                                                                    }
+                                                                    <a href="@Url.Action("EditProduct", "Account", new { id = encodedId })"
+                                                                       class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="Edit Category">
+                                                                        <i class="fas fa-arrow-circle-right"></i> Edit
+                                                                    </a>
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-
-    @* ManageUser Card *@
-    <section id="basic-input">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Manage Product</h4>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-
-                            @* <form asp-action="AddUser" method="post">
-                                <div class="row">
-                                    <div class="col-xl-6 col-md-6 col-12">
-                                        <div class="mb-1">
-                                            <label class="form-label" asp-for="UserName">Name:</label>
-                                            <input type="text" class="form-control" asp-for="UserName" placeholder="Enter Name..." required />
-                                            <span asp-validation-for="UserName" class="text-danger"></span>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-xl-6 col-md-6 col-12">
-                                        <div class="mb-1">
-                                            <label class="form-label" asp-for="Email">Email:</label>
-                                            <input type="email" asp-for="Email" class="form-control" required />
-                                            <span asp-validation-for="Email" class="text-danger"></span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-xl-6 col-md-6 col-12">
-                                        <div class="mb-1">
-                                            <label class="form-label" asp-for="Password">Password:</label>
-                                            <input type="password" asp-for="Password" class="form-control" required />
-                                            <span asp-validation-for="Password" class="text-danger"></span>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-xl-6 col-md-6 col-12">
-                                        <div class="mb-1">
-                                            <label class="form-label" asp-for="ConfirmPassword">Confirm Password:</label>
-                                            <input type="password" asp-for="ConfirmPassword" class="form-control" required />
-                                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-9">
-                                    </div>
-                                    <div class="col-3">
-                                        <button type="submit" class="btn btn-sm btn-primary">Create User</button>
-                                        <button type="button" id="btnClose" class="btn btn-sm btn-secondary">Close</button>
-                                    </div>
-                                </div>
-                            </form> *@
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
 </div>
 
 <script>
@@ -129,6 +110,14 @@
                 text: errorMessage
             });
         }
+
+        $('#myTable').DataTable({
+            order: [[0, 'desc']],
+            dom: '<"card-header border-bottom p-1"<"head-label"><"dt-action-buttons text-end"B>><"d-flex justify-content-between align-items-center mx-0 row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>t<"d-flex justify-content-between mx-0 row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
+            displayLength: 25,
+            lengthMenu: [25, 50, 75, 100]
+        });
+
         $("#btnClose").click(function () {
             window.location.href = "/Account/Dashboard";
         });

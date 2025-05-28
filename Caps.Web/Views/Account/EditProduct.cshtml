@@ -1,0 +1,241 @@
+﻿@model MSGM.Web.ViewModels.vmProduct
+@{
+    ViewData["Title"] = "EditCategory";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="content-header row">
+    <div class="content-header-left col-md-9 col-12 mb-2">
+        <div class="row breadcrumbs-top">
+            <div class="col-12">
+                <h2 class="content-header-title float-start mb-0">Product Management</h2>
+                <div class="breadcrumb-wrapper">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="~/Account/Dashboard">Dashboard</a>
+                        </li>
+                        @* <li class="breadcrumb-item">
+                            <a href="~/Account/NewUser">User Management</a>
+                        </li> *@
+                        <li class="breadcrumb-item active">
+                            Edit Product
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="content-body">
+    <section id="basic-input">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Edit Product</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <form method="post">
+                                <div class="row">
+                                    <div class="col-xl-6 col-md-6 col-12">
+                                        <div class="mb-1">
+                                            <label class="form-label" asp-for="productCategory">Category:</label>
+                                            <select asp-for="productCategory" class="select2 form-select" data-live-search="1" required>
+                                                @if (ViewBag.Categories != null)
+                                                {
+                                                    foreach (var role in ViewBag.Categories)
+                                                    {
+                                                        <option value="@role.Value">@role.Text</option>
+                                                    }
+                                                }
+                                            </select>
+                                            <div class="position-relative">
+                                                <span asp-validation-for="productCategory" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xl-6 col-md-6 col-12">
+                                        <div class="mb-1">
+                                            <label class="form-label" asp-for="productTitle">Title:</label>
+                                            <input type="text" asp-for="productTitle" class="form-control" required />
+                                            <span asp-validation-for="productTitle" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xl-6 col-md-6 col-12">
+                                        <div class="mb-1">
+                                            <label class="form-label" asp-for="productDescription">Description:</label>
+                                            <textarea class="form-control" rows="2" asp-for="productDescription"></textarea>
+                                            <div class="position-relative">
+                                                <span asp-validation-for="productDescription" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xl-6 col-md-6 col-12">
+                                        <div class="mb-1">
+                                            <label class="form-label" asp-for="productPrice">Price:</label>
+                                            <input type="number" asp-for="productPrice" class="form-control" required />
+                                            <span asp-validation-for="productPrice" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xl-6 col-md-6 col-12">
+                                        <div class="mb-1">
+                                            <label class="form-label" asp-for="productStatus">Status:</label>
+                                            <select asp-for="productStatus" class="select2 form-select" data-live-search="1" required>
+                                                <option value="">-- Select Status --</option>
+                                                <option value="true">Available</option>
+                                                <option value="false">Sold Out/ Coming Soon</option>
+                                            </select>
+                                            <div class="position-relative">
+                                                <span asp-validation-for="productStatus" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-6 col-md-6 col-12">
+                                        <div class="mb-1">
+                                            <label class="form-label" asp-for="Image">Image:</label>
+                                            <input type="file" class="form-control" name="Image" />
+                                            <div class="position-relative">
+                                                <span asp-validation-for="Image" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xl-6 col-md-6 col-12">
+                                    </div>
+                                    <div class="col-xl-6 col-md-6 col-12">
+                                        <div class="border-primary">
+                                            <img src="~/DataFiles/@Model.productImage" style="width:200px; height:200px;" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-1" style="align-content:end">
+                                    <div class="col-8">
+                                    </div>
+                                    <div class="col-4">
+                                        <button type="button" id="btnUpdate" class="btn btn-sm-block btn-primary">Update</button>
+                                        <button type="button" id="btnDelete" class="btn btn-sm-block btn-danger">Delete</button>
+                                        <button type="button" id="btnClose" class="btn btn-sm btn-secondary">Close</button>
+                                    </div>
+                                </div>
+
+                                <input type="hidden" id="ProductId" value="@Model.productId" />
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Basic Inputs end -->
+</div>
+
+<script>
+    $(document).ready(function () {
+        var successMessage = '@TempData["SuccessMessage"]';
+        var errorMessage = '@TempData["ErrorMessage"]';
+        if (successMessage) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: successMessage
+            }).then((result) => {
+                if (result.isConfirmed)
+                {
+                    window.location.href = '/Account/NewCategory';
+                }
+            });
+        }
+        else if (errorMessage) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: errorMessage
+            });
+        }
+
+        $("#btnUpdate").click(function () {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Do you want to update the category?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, update it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var productId = '@Model.productId';
+                    var data = {
+                        CategoryTitle: $('#CategoryTitle').val(),
+                        CategoryDescription: $('#CategoryDescription').val(),
+                        CategoryStatus: $('#CategoryStatus').val(),
+                        CategoryId : productId
+                    };
+                    $.ajax({
+                        type: 'POST',
+                        url: '/Account/UpdateCategory',
+                        data: data,
+                        success: function (response) {
+                            Swal.fire({
+                                icon: response.success ? 'success' : 'error',
+                                title: response.success ? 'Success' : 'Error',
+                                text: response.message
+                            }).then(() => {
+                                if (response.success) {
+                                    window.location.href = '/Account/ManageCategory';
+                                }
+                            });
+                        },
+                        error: function () {
+                            Swal.fire('Error', 'An error occurred while updating the category.', 'error');
+                        }
+                    });
+                }
+            });
+        });
+
+        $("#btnDelete").click(function () {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "This action cannot be undone.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var productId = '@Model.productId';
+                    $.ajax({
+                        type: 'POST',
+                        url: '/Account/DeleteCategory',
+                        data: { id: productId },
+                        success: function (response) {
+                            Swal.fire({
+                                icon: response.success ? 'success' : 'error',
+                                title: response.success ? 'Deleted!' : 'Error',
+                                text: response.message
+                            }).then(() => {
+                                if (response.success) {
+                                    window.location.href = '/Account/ManageCategory';
+                                }
+                            });
+                        },
+                        error: function () {
+                            Swal.fire('Error', 'An error occurred while deleting the category.', 'error');
+                        }
+                    });
+                }
+            });
+        });
+
+        $("#btnClose").click(function () {
+            window.location.href = "/Account/ManageProduct";
+        });
+    });
+</script>

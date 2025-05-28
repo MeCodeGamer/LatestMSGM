@@ -36,7 +36,7 @@
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <form asp-action="AddProduct" method="post">
+                            <form asp-action="AddProduct" method="post" enctype="multipart/form-data">
                                 <div class="row">
                                     <div class="col-xl-6 col-md-6 col-12">
                                         <div class="mb-1">
@@ -103,8 +103,11 @@
                                     <div class="col-xl-6 col-md-6 col-12">
                                         <div class="mb-1">
                                             <label class="form-label" asp-for="Image">Image:</label>
-                                            <input type="image" asp-for="Image" class="form-control" required />
-                                            <span asp-validation-for="Image" class="text-danger"></span>
+                                            <input type="file" class="form-control" name="Image" required />
+                                            <div class="position-relative">
+                                                <span asp-validation-for="Image" class="text-danger"></span>
+                                            </div>
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -135,6 +138,11 @@
                 icon: 'success',
                 title: 'Success',
                 text: successMessage
+             }).then((result) => {
+                if (result.isConfirmed)
+                {
+                    window.location.href = '/Account/NewProduct';
+                }
             });
         }
         else if (errorMessage) {
@@ -144,6 +152,7 @@
                 text: errorMessage
             });
         }
+
         $("#btnClose").click(function () {
             window.location.href = "/Account/Dashboard";
         });

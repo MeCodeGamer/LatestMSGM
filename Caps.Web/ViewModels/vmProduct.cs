@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using MSGM.Entity.Models;
 
 namespace MSGM.Web.ViewModels
 {
@@ -24,9 +25,24 @@ namespace MSGM.Web.ViewModels
 
         [Required(ErrorMessage = "Product image is required.")]
         [Display(Name = "Image URL")]
-        public string Image { get; set; } = string.Empty;
+        public IFormFile Image { get; set; }
 
         [Display(Name = "Available")]
         public bool Status { get; set; }
+
+        //
+
+        public int productId { get; set; }
+        public int productCategory { get; set; }
+        public string? productTitle { get; set; }
+        public string? productDescription { get; set; }
+        public double productPrice { get; set; }
+        public string? productImage { get; set; }
+        public bool productStatus { get; set; }
+
+
+
+        public List<Product>? productlist { get; set; }
+        public Category? category{ get; set; }
     }
 }

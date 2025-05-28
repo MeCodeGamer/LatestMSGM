@@ -427,11 +427,10 @@ namespace MSGM.Web.Controllers
 
 
         //<==================================================================Product Working ===========================================================>
-        public async Task<IActionResult> NewProduct()
+        
+        public void LoadLov()
         {
-            try
-            {
-                ViewBag.Categories = new SelectList(
+            ViewBag.Categories = new SelectList(
                 new List<SelectListItem>
                 {
                     new SelectListItem
@@ -444,7 +443,12 @@ namespace MSGM.Web.Controllers
                     Value = c.Id.ToString(),
                     Text = $"{c.Title.ToUpper()}"
                 })), "Value", "Text");
-
+        }
+        public async Task<IActionResult> NewProduct()
+        {
+            try
+            {
+                LoadLov();
                 return await Task.FromResult<IActionResult>(View());
             }
             catch (Exception ex)
@@ -454,11 +458,146 @@ namespace MSGM.Web.Controllers
             }
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddProduct(vmProduct model)
+        {
+            try
+            {
+                if (User == null || !User.Identity.IsAuthenticated)
+                {
+                    TempData["ErrorMessage"] = "Unauthorized access!";
+                    return RedirectToAction("Logout", "Account");
+                }
+
+                LoadLov();
+
+                string FileName = Path.GetFileName(model.Image.FileName);
+                string Ext = Path.GetExtension(model.Image.FileName);
+
+                if (Ext.ToLower() == ".jpg" || Ext.ToLower() == ".png" || Ext.ToLower() == ".jpeg")
+                {
+                    string FilePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\DataFiles", FileName);
+
+                    if (System.IO.File.Exists(FilePath))
+                    {
+                        TempData["ErrorMessage"] = "A file with the same name already exists. Please rename the file and try again.";
+                        return await Task.FromResult<IActionResult>(View("NewProduct", model));
+                    }
+
+                    using (var fs = new FileStream(FilePath, FileMode.Create))
+                    {
+                        await model.Image.CopyToAsync(fs);
+                    }
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Please select a valid image file (jpg, png, jpeg).";
+                    return await Task.FromResult<IActionResult>(View("NewProduct", model));
+                }
+
+
+                if (!ModelState.IsValid)
+                {
+                    TempData["ErrorMessage"] = "Required Fields are Empty!";
+                    return await Task.FromResult<IActionResult>(View("NewProduct", model));
+                }
+
+                var product = new Product
+                {
+                    CatId = model.CatId,
+                    Title = model.Title,
+                    Description = model.Description,
+                    Price = model.Price,
+                    Image = model.Image.FileName.ToString(),
+                    Status = model.Status,
+                    CreatedBy = User?.Identity?.Name,
+                    CreatedOn = DateTime.Now
+                };
+
+                _unitOfWork.product.Add(product);
+                int result = await _unitOfWork.RtCompleteAsync();
+                if (result > 0)
+                {
+                    TempData["SuccessMessage"] = "Product added successfully!";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Failed to save product. Please try again.";
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Error While Adding Category, Error : " + ex.Message);
+                TempData["ErrorMessage"] = "Error While Adding Product, Error : " + ex.Message;
+            }
+            return await Task.FromResult<IActionResult>(View("NewProduct", model));
+        }
+
         public async Task<IActionResult> ManageProduct()
         {
             try
             {
+                var model = new vmProduct();
+                if (User == null || !User.Identity.IsAuthenticated)
+                {
+                    TempData["ErrorMessage"] = "Unauthorized access!";
+                    return RedirectToAction("Logout", "Account");
+                }
+
+                model.productlist = _unitOfWork.product.GetAllProducts();
+                if (model.productlist == null || model.productlist.Count == 0)
+                {
+                    TempData["ErrorMessage"] = "No Active Products Found!";
+                    return await Task.FromResult<IActionResult>(View(model));
+                }
+
+                return await Task.FromResult<IActionResult>(View(model));
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message);
                 return await Task.FromResult<IActionResult>(View());
+            }
+        }
+
+        public async Task<IActionResult> EditProduct(string Id)
+        {
+            try
+            {
+                var model = new vmProduct();
+                if (User == null || !User.Identity.IsAuthenticated)
+                {
+                    TempData["ErrorMessage"] = "Unauthorized access!";
+                    return RedirectToAction("Logout", "Account");
+                }
+
+                var decodedBytes = Convert.FromBase64String(Id);
+                var decodedString = System.Text.Encoding.UTF8.GetString(decodedBytes);
+
+                //ID validation and setting in Model
+                if (!int.TryParse(decodedString, out int ProductID))
+                {
+                    TempData["ErrorMessage"] = "Invalid Product Id Format!";
+                    return await Task.FromResult<ActionResult>(View(model));
+                }
+                model.productId = ProductID;
+                LoadLov();
+
+                var ProductDetails = _unitOfWork.product.GetProductById(ProductID);
+                if (ProductDetails == null)
+                {
+                    TempData["ErrorMessage"] = "Failed to get the selected Product's detail!";
+                    return await Task.FromResult<IActionResult>(View(model));
+                }
+                model.productCategory = ProductDetails.CatId;
+                model.productTitle = ProductDetails.Title;
+                model.productDescription = ProductDetails.Description;
+                model.productPrice = ProductDetails.Price;
+                model.productStatus = ProductDetails.Status;
+                model.productImage  = ProductDetails.Image;
+
+                return await Task.FromResult<IActionResult>(View(model));
             }
             catch (Exception ex)
             {

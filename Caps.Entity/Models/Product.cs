@@ -16,7 +16,7 @@ namespace MSGM.Entity.Models
         
         [ForeignKey("Category")]
         public int CatId { get; set; }
-        public Category Category { get; set; }
+        public Category? Category { get; set; }
 
         [Required]
         [StringLength(100)]

@@ -11,5 +11,6 @@ namespace MSGM.Core
     {
         List<Product> GetActiveProducts();
         public Product? GetProductById(int id);
+        List<Product> GetAllProducts();
     }
 }

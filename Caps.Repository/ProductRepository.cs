@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace MSGM.Repository
 {
@@ -19,6 +20,10 @@ namespace MSGM.Repository
         public List<Product> GetActiveProducts()
         {
             return CapsContext.Product.Where(c => c.Status == true).ToList();
+        }
+        public List<Product> GetAllProducts()
+        {
+            return CapsContext.Product.Include(p => p.Category).ToList();
         }
 
         public Product? GetProductById(int id)
