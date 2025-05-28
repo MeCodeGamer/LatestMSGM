@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MSGM.Entity.Migrations
 {
     /// <inheritdoc />
-    public partial class Desktop1 : Migration
+    public partial class Laptop1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

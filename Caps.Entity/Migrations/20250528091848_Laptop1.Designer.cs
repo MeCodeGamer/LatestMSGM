@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MSGM.Entity.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250526163904_Desktop1")]
-    partial class Desktop1
+    [Migration("20250528091848_Laptop1")]
+    partial class Laptop1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
