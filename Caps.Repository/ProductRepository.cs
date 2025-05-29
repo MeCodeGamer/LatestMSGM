@@ -19,7 +19,7 @@ namespace MSGM.Repository
         public ApplicationDbContext CapsContext => Context as ApplicationDbContext;
         public List<Product> GetActiveProducts()
         {
-            return CapsContext.Product.Where(c => c.Status == true).ToList();
+            return CapsContext.Product.Where(c => c.Status == true).Include(p => p.Category).ToList();
         }
         public List<Product> GetAllProducts()
         {
