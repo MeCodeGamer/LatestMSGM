@@ -5,6 +5,7 @@ namespace MSGM.Web.ViewModels
 {
     public class vmProduct
     {
+        //Add Product
         [Required(ErrorMessage = "Category is required.")]
         [Display(Name = "Category")]
         public int CatId { get; set; }
@@ -30,8 +31,7 @@ namespace MSGM.Web.ViewModels
         [Display(Name = "Available")]
         public bool Status { get; set; }
 
-        //
-
+        //Edit Product
         public int productId { get; set; }
         public int productCategory { get; set; }
         public string? productTitle { get; set; }
@@ -40,9 +40,7 @@ namespace MSGM.Web.ViewModels
         public string? productImage { get; set; }
         public bool productStatus { get; set; }
 
-
-
+        //Manage Product
         public List<Product>? productlist { get; set; }
-        public Category? category{ get; set; }
     }
 }

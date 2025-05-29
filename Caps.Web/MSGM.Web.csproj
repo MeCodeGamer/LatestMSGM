@@ -33,7 +33,6 @@
   <ItemGroup>
     <Folder Include="wwwroot\app-assets\vendors\js\tables\datatable\fonts\Roboto\" />
     <Folder Include="wwwroot\app-assets\vendors\js\tables\datatable\Roboto\" />
-    <Folder Include="wwwroot\DataFiles\" />
   </ItemGroup>
 
 </Project>

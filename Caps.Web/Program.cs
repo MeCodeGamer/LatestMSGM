@@ -74,8 +74,8 @@ public class Program
         app.UseAuthorization();
         app.MapControllerRoute(
             name: "default",
-            //pattern: "{controller=User}/{action=Shop}/{id?}");
-            pattern: "{controller=Account}/{action=Login}/{id?}");
+            pattern: "{controller=User}/{action=Shop}/{id?}");
+            //pattern: "{controller=Account}/{action=Login}/{id?}");
 
         app.Run();
 

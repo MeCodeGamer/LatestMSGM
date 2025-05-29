@@ -373,7 +373,7 @@ namespace MSGM.Web.Controllers
                     var UpdateCategory = _unitOfWork.category.GetCategoryById(model.CategoryId.Value);
                     if (UpdateCategory == null)
                     {
-                        return Json(new { success = false, message = "Failed to get the selected Category's detail!" });
+                        return await Task.FromResult<IActionResult>(Json(new { success = false, message = "Failed to get the selected Category's detail!" }));
                     }
                     UpdateCategory.Title = model.CategoryTitle;
                     UpdateCategory.Description = model.CategoryDescription;
@@ -384,16 +384,16 @@ namespace MSGM.Web.Controllers
                     int result = await _unitOfWork.RtCompleteAsync();
                     if (result == 0)
                     {
-                        return Json(new { success = false, message = "Failed to update category. Please try again." });
+                        return await Task.FromResult<IActionResult>(Json(new { success = false, message = "Failed to update category. Please try again." }));
                     }
-                    return Json(new { success = true, message = "Category updated successfully!" });
+                    return await Task.FromResult<IActionResult>(Json(new { success = true, message = "Category updated successfully!" }));
                 }
                 catch (Exception ex)
                 {
-                    return Json(new { success = false, message = $"Error: {ex.Message}" });
+                    return await Task.FromResult<IActionResult>(Json(new { success = false, message = $"Error: {ex.Message}" }));
                 }
             }
-            return Json(new { success = false, message = "Update failed. Please check the input." });
+            return await Task.FromResult<IActionResult>(Json(new { success = false, message = "Update failed. Please check the input." }));
         }
         [HttpPost]
         public async Task<IActionResult> DeleteCategory(int id)
@@ -402,29 +402,29 @@ namespace MSGM.Web.Controllers
             {
                 if (id <= 0)
                 {
-                    return Json(new { success = false, message = "Invalid category ID." });
+                    return await Task.FromResult<IActionResult>(Json(new { success = false, message = "Invalid category ID." }));
                 }
 
                 var category = _unitOfWork.category.GetCategoryById(id);
                 if (category == null)
                 {
-                    return Json(new { success = false, message = "Category not found." });
+                    return await Task.FromResult<IActionResult>(Json(new { success = false, message = "Category not found." }));
                 }
                 _unitOfWork.category.Remove(category);
                 int result = await _unitOfWork.RtCompleteAsync();
                 if (result == 0)
                 {
-                    return Json(new { success = false, message = "Failed to delete category. Please try again." });
+                    return await Task.FromResult<IActionResult>(Json(new { success = false, message = "Failed to delete category. Please try again." }));
                 }
 
-                return Json(new { success = true, message = "Category deleted successfully!" });
+                return await Task.FromResult<IActionResult>(Json(new { success = true, message = "Category deleted successfully!" }));
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = $"Error: {ex.Message}" });
+                //return Json(new { success = false, message = $"Error: {ex.Message}" });
+                return await Task.FromResult<IActionResult>(Json(new { success = false, message = $"Error: {ex.Message}" }));
             }
         }
-
 
         //<==================================================================Product Working ===========================================================>
         
@@ -603,6 +603,133 @@ namespace MSGM.Web.Controllers
             {
                 Log.Error(ex.Message);
                 return await Task.FromResult<IActionResult>(View());
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateProduct(vmProduct model)
+        {
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(model.productTitle) && !string.IsNullOrWhiteSpace(model.productDescription) && 
+                    model.productId.ToString() != "" && model.productId > 0)
+                {
+                    try
+                    {
+                        var UpdateProduct = _unitOfWork.product.GetProductById(model.productId);
+                        if (UpdateProduct == null)
+                        {
+                            return Json(new { success = false, message = "Failed to get the selected Product's detail!" });
+                        }
+                        UpdateProduct.Title = model.productTitle;
+                        UpdateProduct.Description = model.productDescription;
+                        UpdateProduct.Price = model.productPrice;
+                        UpdateProduct.Status = model.productStatus;
+                        UpdateProduct.CatId = model.productCategory;
+
+
+                        if (model.Image != null && model.Image.Length > 0)
+                        {
+                            string FileName = Path.GetFileName(model.Image.FileName);
+                            string Ext = Path.GetExtension(model.Image.FileName).ToLower();
+
+                            if (Ext == ".jpg" || Ext == ".png" || Ext == ".jpeg")
+                            {
+                                string rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "DataFiles");
+                                string newFilePath = Path.Combine(rootPath, FileName);
+
+                                // Prevent name conflict
+                                if (System.IO.File.Exists(newFilePath))
+                                {
+                                    return Json(new { success = false, message = "A file with the same name already exists. Please rename the file and try again." });
+                                }
+
+                                // Delete existing image
+                                if (!string.IsNullOrEmpty(model.productImage))
+                                {
+                                    string existingFilePath = Path.Combine(rootPath, model.productImage);
+                                    if (System.IO.File.Exists(existingFilePath))
+                                    {
+                                        System.IO.File.Delete(existingFilePath);
+                                    }
+                                }                               
+
+                                // Save new image
+                                using (var fs = new FileStream(newFilePath, FileMode.Create))
+                                {
+                                    await model.Image.CopyToAsync(fs);
+                                }
+
+                                // Assign new image file name to the product
+                                UpdateProduct.Image = FileName;
+                            }
+                            else
+                            {
+                                return Json(new { success = false, message = "Please select a valid image file (jpg, png, jpeg)." });
+                            }
+                        }
+
+                        UpdateProduct.ModifiedBy = User?.Identity?.Name;
+                        UpdateProduct.ModifiedOn = DateTime.Now;
+
+                        _unitOfWork.product.Update(UpdateProduct);
+                        int result = await _unitOfWork.RtCompleteAsync();
+                        if (result == 0)
+                        {
+                            return Json(new { success = false, message = "Failed to update product. Please try again." });
+                        }
+                        return Json(new { success = true, message = "Product updated successfully!" });
+                    }
+                    catch (Exception ex)
+                    {
+                        return Json(new { success = false, message = $"Error: {ex.Message}" });
+                    }
+                }
+                return await Task.FromResult<IActionResult>(Json(new { success = false, message = "Update failed. Please check the input." }));
+            }
+            catch (Exception ex)
+            {
+                return await Task.FromResult<IActionResult>(Json(new { success = false, message = $"Error: {ex.Message}" }));
+            }
+        }
+            [HttpPost]
+        public async Task<IActionResult> DeleteProduct(int id)
+        {
+            try
+            {
+                if (id <= 0)
+                {
+                    return await Task.FromResult<IActionResult>(Json(new { success = false, message = "Invalid product ID." }));
+                }
+
+                var product = _unitOfWork.product.GetProductById(id);
+                if (product == null)
+                {
+                    return await Task.FromResult<IActionResult>(Json(new { success = false, message = "Product details not found." }));
+                }
+
+                // Delete existing image
+                string rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "DataFiles");
+                if (!string.IsNullOrEmpty(product.Image))
+                {
+                    string existingFilePath = Path.Combine(rootPath, product.Image);
+                    if (System.IO.File.Exists(existingFilePath))
+                    {
+                        System.IO.File.Delete(existingFilePath);
+                    }
+                }
+
+                _unitOfWork.product.Remove(product);
+                int result = await _unitOfWork.RtCompleteAsync();
+                if (result == 0)
+                {
+                    return await Task.FromResult<IActionResult>(Json(new { success = false, message = "Failed to delete product. Please try again." }));
+                }
+                return await Task.FromResult<IActionResult>(Json(new { success = true, message = "Product deleted successfully!" }));
+            }
+            catch (Exception ex)
+            {
+                return await Task.FromResult<IActionResult>(Json(new { success = false, message = $"Error: {ex.Message}" }));
             }
         }
 

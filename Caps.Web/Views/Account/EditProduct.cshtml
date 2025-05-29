@@ -14,9 +14,6 @@
                         <li class="breadcrumb-item">
                             <a href="~/Account/Dashboard">Dashboard</a>
                         </li>
-                        @* <li class="breadcrumb-item">
-                            <a href="~/Account/NewUser">User Management</a>
-                        </li> *@
                         <li class="breadcrumb-item active">
                             Edit Product
                         </li>
@@ -90,7 +87,7 @@
                                             <select asp-for="productStatus" class="select2 form-select" data-live-search="1" required>
                                                 <option value="">-- Select Status --</option>
                                                 <option value="true">Available</option>
-                                                <option value="false">Sold Out/ Coming Soon</option>
+                                                <option value="false">Sold Out / Coming Soon</option>
                                             </select>
                                             <div class="position-relative">
                                                 <span asp-validation-for="productStatus" class="text-danger"></span>
@@ -127,6 +124,7 @@
                                 </div>
 
                                 <input type="hidden" id="ProductId" value="@Model.productId" />
+                                <input type="hidden" id="ExistingImage" value="@Model.productImage" />
 
                             </form>
                         </div>
@@ -165,23 +163,35 @@
         $("#btnUpdate").click(function () {
             Swal.fire({
                 title: 'Are you sure?',
-                text: "Do you want to update the category?",
+                text: "Do you want to update the product?",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Yes, update it!'
             }).then((result) => {
                 if (result.isConfirmed) {
                     var productId = '@Model.productId';
-                    var data = {
-                        CategoryTitle: $('#CategoryTitle').val(),
-                        CategoryDescription: $('#CategoryDescription').val(),
-                        CategoryStatus: $('#CategoryStatus').val(),
-                        CategoryId : productId
-                    };
+                    var existingImage = '@Model.productImage';
+                    
+                    var formData = new FormData();
+                    formData.append("productId", productId);
+                    formData.append("productCategory", $("[name='productCategory']").val());
+                    formData.append("productTitle", $("[name='productTitle']").val());
+                    formData.append("productDescription", $("[name='productDescription']").val());
+                    formData.append("productPrice", $("[name='productPrice']").val());
+                    formData.append("productStatus", $("[name='productStatus']").val());
+                    formData.append("productImage", existingImage);
+
+                    var fileInput = $("input[name='Image']")[0];
+                    if (fileInput.files.length > 0) {
+                        formData.append("Image", fileInput.files[0]);
+                    }
+
                     $.ajax({
                         type: 'POST',
-                        url: '/Account/UpdateCategory',
-                        data: data,
+                        url: '/Account/UpdateProduct',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
                         success: function (response) {
                             Swal.fire({
                                 icon: response.success ? 'success' : 'error',
@@ -189,12 +199,12 @@
                                 text: response.message
                             }).then(() => {
                                 if (response.success) {
-                                    window.location.href = '/Account/ManageCategory';
+                                    window.location.href = '/Account/ManageProduct';
                                 }
                             });
                         },
                         error: function () {
-                            Swal.fire('Error', 'An error occurred while updating the category.', 'error');
+                            Swal.fire('Error', 'An error occurred while updating the product.', 'error');
                         }
                     });
                 }
@@ -213,7 +223,7 @@
                     var productId = '@Model.productId';
                     $.ajax({
                         type: 'POST',
-                        url: '/Account/DeleteCategory',
+                        url: '/Account/DeleteProduct',
                         data: { id: productId },
                         success: function (response) {
                             Swal.fire({
@@ -222,12 +232,12 @@
                                 text: response.message
                             }).then(() => {
                                 if (response.success) {
-                                    window.location.href = '/Account/ManageCategory';
+                                    window.location.href = '/Account/ManageProduct';
                                 }
                             });
                         },
                         error: function () {
-                            Swal.fire('Error', 'An error occurred while deleting the category.', 'error');
+                            Swal.fire('Error', 'An error occurred while deleting the product.', 'error');
                         }
                     });
                 }
