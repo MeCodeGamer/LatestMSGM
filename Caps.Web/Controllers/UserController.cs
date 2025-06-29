@@ -33,5 +33,35 @@ namespace MSGM.Web.Controllers
                 return await Task.FromResult<IActionResult>(View(model));
             }
         }
+
+        public async Task<IActionResult> Details(int id)
+        {
+            var model = new vmProductDetails();
+            try
+            {
+                var product = _unitOfWork.product.GetProductById(id);
+                if(product != null)
+                {
+                    model.productId = product.Id;
+                    model.productCategory = product?.Category?.Title??"";
+                    model.productTitle = product.Title;
+                    model.productDescription = product.Description;
+                    model.productPrice = product.Price ;
+                    model.productImage = product.Image;
+                    model.productStatus = product.Status;
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Product not found.";
+                }
+
+                return await Task.FromResult<IActionResult>(View(model));
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message);
+                return await Task.FromResult<IActionResult>(View(model));
+            }
+        }
     }
 }

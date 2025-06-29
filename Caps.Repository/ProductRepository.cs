@@ -28,7 +28,7 @@ namespace MSGM.Repository
 
         public Product? GetProductById(int id)
         {
-            return CapsContext.Product.FirstOrDefault(c => c.Id == id);
+            return CapsContext.Product.Where(c => c.Id == id).Include(p=>p.Category).FirstOrDefault();
         }
     }
 }

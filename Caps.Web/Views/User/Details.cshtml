@@ -1,0 +1,139 @@
+﻿@model MSGM.Web.ViewModels.vmProductDetails
+@{
+    ViewData["Title"] = "ProductDetail";
+    Layout = "~/Views/Shared/_Layout - Copy.cshtml";
+}
+
+<!-- BEGIN: Content-->
+<div class="app-content content ecommerce-application">
+    <div class="content-overlay"></div>
+    <div class="header-navbar-shadow"></div>
+    <div class="content-wrapper container-xxl p-0">
+        
+        <div class="content-header row">
+            <div class="content-header-left col-md-9 col-12 mb-2">
+                <div class="row breadcrumbs-top">
+                    <div class="col-12">
+                        <h2 class="content-header-title float-start mb-0"></h2>
+                        <div class="breadcrumb-wrapper">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item">
+                                    <a href="~/User/Shop"></a>
+                                </li>
+                                <li class="breadcrumb-item active">
+                                    
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-body">
+            <!-- app e-commerce details start -->
+            <section class="app-ecommerce-details">
+                <div class="card">
+
+                    <div class="row breadcrumbs-top">
+                        <div class="col-12">
+                            <h2 class="content-header-title float-start mb-0 mt-1 ms-1">Product Details</h2>
+                            <div class="breadcrumb-wrapper">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item mb-0 mt-1 ms-1">
+                                        <a href="~/User/Shop">Shop</a>
+                                    </li>
+                                    <li class="breadcrumb-item active mb-0 mt-1">
+                                        Product Details
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Product Details starts -->
+                    <div class="card-body">
+                        <div class="row my-2">
+                            <div class="col-12 col-md-5 d-flex align-items-center justify-content-center mb-2 mb-md-0">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <img src="~/DataFiles/@Model.productImage" class="img-fluid product-img" alt="@Model.productTitle" />
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-7">
+                                <h4>@Model.productTitle</h4>
+                                <span class="card-text item-company">
+                                    By <a href="#" class="company-name">@Model.productCategory</a>  <!-- Or Category.Name -->
+                                </span>
+
+                                <div class="ecommerce-details-price d-flex flex-wrap mt-1">
+                                    <h4 class="item-price me-1">$@Model.productPrice</h4>
+                                </div>
+
+                                <p class="card-text">
+                                    Available -
+                                    <span class="@(Model.productStatus ? "text-success" : "text-danger")">
+                                        @(Model.productStatus ? "In stock" : "Out of stock")
+                                    </span>
+                                </p>
+
+                                <p class="card-text">@Model.productDescription</p>
+
+                                <ul class="product-features list-unstyled">
+                                    <li><i data-feather="shopping-cart"></i> <span>Free Shipping</span></li>
+                                </ul>
+                                <hr />
+
+                                <div class="d-flex flex-column flex-sm-row pt-1">
+                                    <a href="#" class="btn btn-primary btn-cart me-0 me-sm-1 mb-1 mb-sm-0">
+                                        <i data-feather="shopping-cart" class="me-50"></i>
+                                        <span class="add-to-cart">Add to cart</span>
+                                    </a>
+                                    <a href="/User/Shop" class="btn btn-outline-secondary me-0 me-sm-1 mb-1 mb-sm-0">
+                                        <i class="me-50"></i>
+                                        <span>Back to Shop</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Item features starts -->
+                    <div class="item-features">
+                        <div class="row text-center">
+                            <div class="col-12 col-md-4 mb-4 mb-md-0">
+                                <div class="w-75 mx-auto">
+                                    <i data-feather="award"></i>
+                                    <h4 class="mt-2 mb-1">100% Original</h4>
+                                    <p class="card-text">All products are sourced directly from verified brands and certified distributors.</p>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-4 mb-4 mb-md-0">
+                                <div class="w-75 mx-auto">
+                                    <i data-feather="clock"></i>
+                                    <h4 class="mt-2 mb-1">10 Day Replacement</h4>
+                                    <p class="card-text">Enjoy hassle-free replacements within 10 days of delivery for damaged or faulty items.</p>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-4 mb-4 mb-md-0">
+                                <div class="w-75 mx-auto">
+                                    <i data-feather="shield"></i>
+                                    <h4 class="mt-2 mb-1">1 Year Warranty</h4>
+                                    <p class="card-text">This product comes with a 1-year official warranty for manufacturing defects.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Item features ends -->
+
+                    
+                    <br />
+
+                </div>
+            </section>
+            <!-- app e-commerce details end -->
+        </div>
+    </div>
+</div>
+<!-- END: Content-->
